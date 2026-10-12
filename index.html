@@ -1,0 +1,402 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SATYA Browser — Premium</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#050817;--panel:rgba(9,17,45,.82);--line:#293e77;--blue:#38bdf8;--purple:#8b5cf6;--text:#f1f5ff;--muted:#9aadd3}
+body{min-height:100vh;background:var(--bg);color:var(--text);font:14px Arial,sans-serif;overflow-x:hidden}
+#stars{position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none}
+.nebula{position:fixed;inset:-20%;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 20% 25%,#4223a955,transparent 35%),radial-gradient(ellipse at 80% 35%,#1249aa44,transparent 36%),radial-gradient(ellipse at 55% 90%,#8b25c633,transparent 40%);filter:blur(35px);animation:drift 20s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(2%,2%) scale(1.1)}}
+button,input{font:inherit}
+button,a{ -webkit-tap-highlight-color:transparent}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+header{height:70px;display:flex;align-items:center;gap:24px;padding:0 28px;border-bottom:1px solid #263a70;background:#050817dd;position:relative;z-index:2}
+.brand{font-size:23px;font-weight:900;letter-spacing:4px;color:#7dd3fc;white-space:nowrap}
+.brand span{color:white}
+.version{font-size:10px;color:var(--muted);letter-spacing:2px;white-space:nowrap}
+.top-search{display:flex;align-items:center;gap:10px;flex:1;max-width:700px;margin:auto;background:#101b3be8;border:1px solid #334b85;border-radius:30px;padding:11px 17px}
+.top-search input{width:100%;background:transparent;border:0;outline:0;color:white}
+.top-search input::placeholder{color:#91a5d2}
+.top-search button,.icon-button{background:transparent;border:0;color:#8edbff;font-size:20px}
+.top-actions{display:flex;gap:17px}
+.layout{display:grid;grid-template-columns:190px minmax(0,1fr);min-height:calc(100vh - 70px)}
+aside{padding:26px 14px;border-right:1px solid #233766;background:#060d23aa;display:flex;flex-direction:column;gap:8px}
+.nav{display:flex;gap:12px;align-items:center;padding:13px 14px;border-radius:12px;color:#bdc9e5;border:1px solid transparent;text-align:left;background:transparent}
+.nav:hover,.nav.active{background:linear-gradient(100deg,#3020a7dd,#5126b8aa);border-color:#6257ef;color:white}
+.side-note{margin-top:auto;border:1px solid #263e7b;border-radius:18px;padding:18px 12px;text-align:center;line-height:1.8;color:#a7caff;background:#0b1432bb}
+main{min-width:0;padding:25px clamp(15px,3vw,38px) 20px}
+.hero{text-align:center;padding:18px 10px 27px}
+.logo{width:70px;height:70px;display:grid;place-items:center;margin:0 auto 12px;border-radius:23px;background:linear-gradient(135deg,#22d3ee,#5364f4,#b04aff);font-size:42px;font-weight:900;box-shadow:0 0 38px #6758fa77;animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-7px) rotate(4deg)}}
+h1{font-size:clamp(36px,5vw,58px);letter-spacing:9px}
+.tagline{margin-top:8px;color:#a9c6ff;font-size:15px}
+.hero-search{display:flex;gap:8px;max-width:690px;margin:27px auto 0;padding:7px;border-radius:50px;background:#0b1434eF;border:1px solid #8271ff;box-shadow:0 0 28px #6847ed35}
+.hero-search input{flex:1;min-width:0;padding:12px 14px;background:transparent;color:white;border:0;outline:0}
+.hero-search button{border:0;border-radius:40px;background:linear-gradient(120deg,#397df6,#9333ea);color:white;padding:0 21px;font-weight:bold}
+.eyebrow{font-size:10px;letter-spacing:3px;color:#90a7d4;margin:17px 0 14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;backdrop-filter:blur(14px);box-shadow:0 12px 36px #0002;overflow:hidden}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:16px 17px;border-bottom:1px solid #26355d;font-weight:bold}
+.panel-head small,.subtle{font-size:11px;color:#94baff;font-weight:normal}
+.plain-btn{border:0;background:transparent;color:#90d9ff;font-size:12px}
+.quick{padding:0 0 18px}
+.tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;padding:17px}
+.tile{min-width:0;min-height:95px;border:1px solid #31477b;background:#111b3be8;border-radius:15px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;cursor:pointer;transition:.2s;position:relative}
+.tile:hover{transform:translateY(-4px);border-color:#9c8aff;background:#1b2851}
+.tile .emoji{font-size:27px}
+.tile span:last-child{font-size:11px;overflow-wrap:anywhere}
+.remove-tile{position:absolute;top:4px;right:7px;color:#ff9cbd;border:0;background:transparent;display:none}
+.editing .remove-tile{display:block}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:17px;margin-top:17px}
+.list{padding:4px 16px 12px}
+.list-row{display:flex;align-items:center;gap:11px;min-width:0;padding:12px 0;border-bottom:1px solid #243252}
+.list-row:last-child{border-bottom:0}
+.row-icon{font-size:20px;width:25px;text-align:center}
+.row-content{min-width:0;flex:1}
+.row-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.row-url{color:#91a8d7;font-size:11px;margin-top:5px;overflow-wrap:anywhere}
+.row-action{border:0;background:transparent;color:#9ccfff;font-size:17px;padding:4px}
+.empty{color:#8fa1c6;text-align:center;padding:24px 10px;font-size:12px;line-height:1.7}
+.quote{margin-top:17px;padding:18px 22px;color:#c5d6fa;line-height:1.8;font-size:13px}
+.quote strong{color:#d9c4ff}
+.clock{text-align:center;margin-top:23px;font-size:25px;letter-spacing:3px;font-weight:bold}
+.date{text-align:center;margin-top:6px;color:#91a6d0;font-size:12px}
+footer{text-align:center;padding:26px 10px 10px;font-size:10px;letter-spacing:3px;color:#7085b2}
+dialog{width:min(440px,calc(100% - 28px));margin:auto;padding:0;border:1px solid #5268ad;border-radius:20px;background:#0b1230;color:white;box-shadow:0 20px 90px #0009}
+dialog::backdrop{background:#02040bbd;backdrop-filter:blur(5px)}
+.modal-inner{padding:22px;display:grid;gap:14px}
+.modal-inner h2{font-size:21px}
+.modal-inner label{display:grid;gap:7px;color:#aebfe0;font-size:12px}
+.modal-inner input{width:100%;padding:12px;border:1px solid #344879;border-radius:10px;background:#101b3a;color:white}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+.primary,.secondary{padding:11px 15px;border-radius:10px;border:1px solid #5265a0}
+.primary{background:linear-gradient(120deg,#397df6,#9333ea);color:white}
+.secondary{background:#172344;color:white}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#162448;border:1px solid #4d66a5;border-radius:12px;padding:12px 18px;display:none;z-index:10}
+body.light{--panel:rgba(235,242,255,.90);--line:#bdccec;--text:#162346;--muted:#51648a;background:#dbe7ff;color:#162346}
+body.light header,body.light aside{background:#eaf0ffed}
+body.light .top-search,body.light .hero-search,body.light .tile{background:#d9e5ff;color:#162346}
+body.light input{color:#162346}
+body.light .nav{color:#344569}
+body.light .nav.active{color:white}
+body.light .panel-head{border-color:#c3d1eb}
+body.light .list-row{border-color:#c7d5ef}
+body.light .quote{color:#344569}
+@media(max-width:900px){.layout{grid-template-columns:68px minmax(0,1fr)}aside{padding:20px 8px}.nav{justify-content:center;padding:14px 4px;font-size:0}.nav:first-letter{font-size:19px}.side-note{font-size:0;padding:12px 2px}.side-note::first-line{font-size:18px}.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.version{display:none}}
+@media(max-width:600px){header{height:auto;min-height:64px;padding:13px;gap:10px;flex-wrap:wrap}.brand{font-size:19px}.top-search{order:3;flex-basis:100%;max-width:none}.top-actions{margin-left:auto}.layout{grid-template-columns:1fr}aside{display:flex;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid #233766;padding:8px}.nav{flex:1;white-space:nowrap;font-size:11px;justify-content:center;padding:10px}.side-note{display:none}main{padding:15px 12px}.hero{padding-top:20px}.columns{grid-template-columns:1fr}.tiles{gap:8px;padding:12px}.tile{min-height:82px}.tagline{font-size:13px}h1{letter-spacing:6px}.clock{font-size:23px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="nebula"></div>
+
+<header>
+  <div class="brand">SATYA<span>.</span></div>
+  <div class="version">BROWSER 3.0</div>
+  <form class="top-search" id="topForm">
+    <span>🔎</span>
+    <input id="topInput" placeholder="Search Google or enter a search..." aria-label="Google search">
+    <button aria-label="Submit search">↵</button>
+  </form>
+  <div class="top-actions">
+    <button class="icon-button" id="bookmarkCurrent" title="Bookmark a website">☆</button>
+    <button class="icon-button" id="themeToggle" title="Toggle light and dark theme">◐</button>
+    <button class="icon-button" id="settingsButton" title="Settings">⚙</button>
+  </div>
+</header>
+
+<div class="layout">
+<aside>
+  <button class="nav active" data-target="home">⌂ Home</button>
+  <button class="nav" data-target="bookmarks">☆ Bookmarks</button>
+  <button class="nav" data-target="history">◷ History</button>
+  <button class="nav" id="editButton">✎ Edit shortcuts</button>
+  <button class="nav" id="clearHistory">⌫ Clear history</button>
+  <div class="side-note">🚀<br>Dream Bigger<br>Search Further<br>♡ SATYA</div>
+</aside>
+
+<main id="home">
+  <section class="hero">
+    <div class="logo">S</div>
+    <h1>SATYA</h1>
+    <p class="tagline">Your world. Your search. Your universe.</p>
+    <form class="hero-search" id="heroForm">
+      <span style="font-size:22px;padding-left:12px">🌐</span>
+      <input id="heroInput" placeholder="Search Google..." aria-label="Search Google" required>
+      <button aria-label="Search">⌕</button>
+    </form>
+    <p class="eyebrow">✦ YOUR GATEWAY TO THE INTERNET ✦</p>
+  </section>
+
+  <section class="panel quick">
+    <div class="panel-head"><span>🚀 Quick Access</span><button class="plain-btn" id="addShortcut">＋ Add shortcut</button></div>
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <div class="columns">
+    <section class="panel" id="bookmarks">
+      <div class="panel-head"><span>☆ Your Bookmarks</span><button class="plain-btn" id="bookmarkAdd">＋ Add</button></div>
+      <div class="list" id="bookmarkList"></div>
+    </section>
+    <section class="panel" id="history">
+      <div class="panel-head"><span>◷ Recent Searches</span><button class="plain-btn" id="clearRecent">Clear all</button></div>
+      <div class="list" id="historyList"></div>
+    </section>
+  </div>
+
+  <section class="panel quote">
+    <strong>✦ A thought for today</strong><br>
+    “Great things are done by a series of small things brought together.” — Vincent van Gogh
+  </section>
+  <div class="clock" id="clock">--:--:--</div>
+  <div class="date" id="date"></div>
+  <footer>SATYA BROWSER 3.0 · EXPLORE THE INFINITE</footer>
+</main>
+</div>
+
+<dialog id="itemDialog">
+  <form class="modal-inner" id="itemForm">
+    <h2 id="dialogTitle">Add shortcut</h2>
+    <label>Website name<input id="itemName" placeholder="Example: GitHub" required maxlength="40"></label>
+    <label>Website address<input id="itemUrl" placeholder="https://example.com" required></label>
+    <div class="modal-actions">
+      <button class="secondary" type="button" id="cancelDialog">Cancel</button>
+      <button class="primary" type="submit">Save</button>
+    </div>
+  </form>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const safeRead = (key, fallback) => {
+  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
+  catch { return fallback; }
+};
+const save = (key, value) => {
+  try { localStorage.setItem(key, JSON.stringify(value)); }
+  catch { notify("Browser storage is unavailable in this preview."); }
+};
+const defaults = [
+  {name:"YouTube",url:"https://www.youtube.com",icon:"▶️"},
+  {name:"Wikipedia",url:"https://www.wikipedia.org",icon:"📚"},
+  {name:"Google Maps",url:"https://maps.google.com",icon:"🌍"},
+  {name:"Gmail",url:"https://mail.google.com",icon:"✉️"},
+  {name:"Google Drive",url:"https://drive.google.com",icon:"💾"},
+  {name:"GitHub",url:"https://github.com",icon:"💻"}
+];
+let shortcuts = safeRead("satyaShortcuts", defaults);
+let bookmarks = safeRead("satyaBookmarks", []);
+let historyItems = safeRead("satyaHistory", []);
+let editing = false, dialogMode = "shortcut";
+let toastTimer;
+
+function notify(message) {
+  $("toast").textContent = message;
+  $("toast").style.display = "block";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $("toast").style.display = "none", 2300);
+}
+
+function validUrl(value) {
+  try {
+    const u = new URL(value);
+    return ["http:", "https:"].includes(u.protocol) ? u.href : null;
+  } catch { return null; }
+}
+function hostname(url) {
+  try { return new URL(url).hostname; } catch { return url; }
+}
+function googleSearch(query) {
+  const q = query.trim();
+  if (!q) return;
+  historyItems = [{query:q,time:Date.now()}, ...historyItems.filter(x=>x.query!==q)].slice(0,12);
+  save("satyaHistory", historyItems);
+  renderHistory();
+  location.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
+}
+$("heroForm").addEventListener("submit", e => {
+  e.preventDefault(); googleSearch($("heroInput").value);
+});
+$("topForm").addEventListener("submit", e => {
+  e.preventDefault(); googleSearch($("topInput").value);
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && !["INPUT","TEXTAREA"].includes(document.activeElement.tagName)) {
+    e.preventDefault(); $("heroInput").focus();
+  }
+});
+
+function renderShortcuts() {
+  const tiles = $("tiles");
+  tiles.innerHTML = "";
+  tiles.classList.toggle("editing", editing);
+  shortcuts.forEach((item,index) => {
+    const a = document.createElement("a");
+    a.className = "tile";
+    a.href = item.url;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    const emoji = document.createElement("span");
+    emoji.className = "emoji";
+    emoji.textContent = item.icon || "🌐";
+    const label = document.createElement("span");
+    label.textContent = item.name;
+    const remove = document.createElement("button");
+    remove.className = "remove-tile";
+    remove.type = "button";
+    remove.textContent = "×";
+    remove.setAttribute("aria-label","Remove "+item.name);
+    remove.onclick = e => {
+      e.preventDefault(); e.stopPropagation();
+      shortcuts.splice(index,1); save("satyaShortcuts",shortcuts); renderShortcuts();
+    };
+    a.append(emoji,label,remove);
+    a.onclick = e => {
+      if(editing) { e.preventDefault(); notify("Use × to remove a shortcut."); }
+    };
+    tiles.append(a);
+  });
+}
+function renderBookmarks() {
+  const list = $("bookmarkList");
+  list.replaceChildren();
+  if (!bookmarks.length) {
+    list.innerHTML = '<div class="empty">No bookmarks yet.<br>Click + Add to save a favorite website.</div>';
+    return;
+  }
+  bookmarks.forEach((item,index) => {
+    const row = document.createElement("div"); row.className="list-row";
+    const icon = document.createElement("span"); icon.className="row-icon"; icon.textContent="☆";
+    const content = document.createElement("a"); content.className="row-content"; content.href=item.url; content.target="_blank"; content.rel="noopener noreferrer";
+    const title = document.createElement("div"); title.className="row-title"; title.textContent=item.name;
+    const url = document.createElement("div"); url.className="row-url"; url.textContent=hostname(item.url);
+    content.append(title,url);
+    const remove=document.createElement("button"); remove.className="row-action"; remove.textContent="×"; remove.title="Remove bookmark";
+    remove.onclick=()=>{bookmarks.splice(index,1);save("satyaBookmarks",bookmarks);renderBookmarks();};
+    row.append(icon,content,remove); list.append(row);
+  });
+}
+function renderHistory() {
+  const list=$("historyList"); list.replaceChildren();
+  if (!historyItems.length) {
+    list.innerHTML='<div class="empty">Your searches will appear here.<br>Search Google to get started.</div>';
+    return;
+  }
+  historyItems.forEach((item,index)=>{
+    const row=document.createElement("div");row.className="list-row";
+    const icon=document.createElement("span");icon.className="row-icon";icon.textContent="⌕";
+    const content=document.createElement("button");content.className="row-content row-action";content.style.textAlign="left";content.textContent=item.query;
+    content.onclick=()=>googleSearch(item.query);
+    const remove=document.createElement("button");remove.className="row-action";remove.textContent="×";remove.title="Remove search";
+    remove.onclick=()=>{historyItems.splice(index,1);save("satyaHistory",historyItems);renderHistory();};
+    row.append(icon,content,remove);list.append(row);
+  });
+}
+
+function openDialog(mode) {
+  dialogMode=mode;
+  $("dialogTitle").textContent=mode==="shortcut"?"Add quick-access shortcut":"Bookmark a website";
+  $("itemName").value="";
+  $("itemUrl").value="";
+  $("itemDialog").showModal();
+  $("itemName").focus();
+}
+$("addShortcut").onclick=()=>openDialog("shortcut");
+$("bookmarkAdd").onclick=()=>openDialog("bookmark");
+$("bookmarkCurrent").onclick=()=>openDialog("bookmark");
+$("cancelDialog").onclick=()=>$("itemDialog").close();
+$("itemForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const name=$("itemName").value.trim();
+  let raw=$("itemUrl").value.trim();
+  if(raw && !/^https?:\/\//i.test(raw)) raw="https://"+raw;
+  const url=validUrl(raw);
+  if(!name || !url) {notify("Enter a name and a valid website address.");return;}
+  if(dialogMode==="shortcut") {
+    shortcuts.push({name,url,icon:"🌐"});
+    save("satyaShortcuts",shortcuts);renderShortcuts();
+  } else {
+    if(bookmarks.some(x=>x.url===url)){notify("That website is already bookmarked.");return;}
+    bookmarks.unshift({name,url});
+    save("satyaBookmarks",bookmarks);renderBookmarks();
+  }
+  $("itemDialog").close();notify("Saved successfully!");
+});
+$("editButton").onclick=()=>{
+  editing=!editing;
+  $("editButton").textContent=editing?"✓ Done editing":"✎ Edit shortcuts";
+  renderShortcuts();
+};
+$("clearHistory").onclick=$("clearRecent").onclick=()=>{
+  if(!historyItems.length){notify("Your search history is already empty.");return;}
+  historyItems=[];save("satyaHistory",historyItems);renderHistory();notify("Search history cleared.");
+};
+document.querySelectorAll(".nav[data-target]").forEach(button=>{
+  button.onclick=()=>{
+    document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));
+    button.classList.add("active");
+    $(button.dataset.target).scrollIntoView({behavior:"smooth",block:"start"});
+  };
+});
+$("settingsButton").onclick=()=>notify("Use the moon icon to switch themes. Shortcuts and bookmarks are saved automatically.");
+$("themeToggle").onclick=()=>{
+  document.body.classList.toggle("light");
+  try{localStorage.setItem("satyaTheme",document.body.classList.contains("light")?"light":"dark");}catch{}
+};
+try {if(localStorage.getItem("satyaTheme")==="light")document.body.classList.add("light");}catch{}
+
+function clock(){
+  const now=new Date();
+  $("clock").textContent=now.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  $("date").textContent=now.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+}
+clock();setInterval(clock,1000);
+renderShortcuts();renderBookmarks();renderHistory();
+
+/* Lightweight animated stars */
+const canvas=$("stars"),ctx=canvas.getContext("2d");
+let w=0,h=0,stars=[],raf=null,last=0;
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function resize(){
+  const dpr=Math.min(devicePixelRatio||1,2);
+  w=innerWidth;h=innerHeight;
+  canvas.width=w*dpr;canvas.height=h*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  stars=Array.from({length:Math.min(180,Math.max(70,Math.floor(w*h/6500)))},()=>({
+    x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.4+.3,
+    speed:Math.random()*.3+.05,phase:Math.random()*6.28
+  }));
+  draw(0);
+}
+function draw(t){
+  ctx.clearRect(0,0,w,h);
+  stars.forEach(s=>{
+    const alpha=.35+.65*(.5+.5*Math.sin(t*.001+s.phase));
+    ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(165,205,255,${alpha})`;ctx.fill();
+    if(!reduce){s.y+=s.speed;if(s.y>h){s.y=0;s.x=Math.random()*w;}}
+  });
+}
+function animate(t){
+  if(document.hidden){raf=null;return;}
+  if(t-last>30){draw(t);last=t;}
+  raf=requestAnimationFrame(animate);
+}
+function start(){if(!document.hidden&&raf===null)raf=requestAnimationFrame(animate);}
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){if(raf!==null)cancelAnimationFrame(raf);raf=null;}
+  else start();
+});
+addEventListener("resize",resize);
+resize();
+if(!reduce)start();
+</script>
+</body>
+</html>
